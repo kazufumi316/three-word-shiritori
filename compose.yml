@@ -1,0 +1,77 @@
+# サービス群の定義開始
+services:
+
+# webサービスの設定
+  web:
+
+# 起動コマンド
+# .はディレクトリ内の全て
+    build: .
+
+
+# 公開ポートの指定
+# webは基本的に3000で固定となる
+# 左がホスト、右がコンテナとなる重複がある場合にはコンテナ側を変更
+    ports:
+      - "3000:3000"
+
+# ファイルの共有化(ホストとコンテナ)の指定
+    volumes:
+      - .:/app
+      - logs:/var/log/myapp
+
+# 先に起動するものを指定
+    depends_on:
+      - db                            # データベースを先に起動
+
+# webの環境変数の設定
+    environment:
+      POSTGRES_HOST: db               # 接続先（サービス名の db を指定）
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+
+# databaseの設定
+  db:
+
+# データベースの指定
+    image: postgres:17
+
+# コンテナ内の環境変数設定
+    environment:
+      POSTGRES_DB: myapp_development   # データベース名
+      POSTGRES_USER: user              # データベースユーザー名
+      POSTGRES_PASSWORD: password      # データベースパスワード
+
+
+# データベースのポート指定(デフォルトのもの)
+    ports:
+      - "5432:5432"
+
+# ファイルの共有化の指定
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# CSSの設定
+  css:
+
+# 起動コマンド
+    build: .
+
+# 実行コマンド
+    command: bash -c "bundle exec rails tailwindcss:watch"
+
+# ファイルの共有化の指定
+    volumes:
+      - .:/app
+      - bundle_data:/usr/local/bundle
+
+# 先に起動するものを指定
+    depends_on:
+      - web                              # webサービスを先に起動
+
+# 上記のサービス群とは別にディレクトリの共有化が必要なものを指定
+volumes:
+  logs:                                  # ログ
+  postgres_data:                         # データベースのデータ
+  bundle_data:                           # 実行データ
