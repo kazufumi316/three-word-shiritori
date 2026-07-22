@@ -108,7 +108,6 @@ MVPで作る機能/本リリースで作る機能
 - email : string
 - encrypted_password : string
 - guest : boolean
-- name : string
 - created_at : timestamp
 - updated_at : timestamp
 
