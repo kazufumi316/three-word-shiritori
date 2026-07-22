@@ -1,25 +1,159 @@
-# README
+# 3文字しりとりマスター
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 1.サービス概要
 
-Things you may want to cover:
+「3文字しりとりマスター」は、脳トレの一環として頭の体操ができるアプリです。
+- 普段のしりとり：「言葉を思い出す」=>「伝える」
+- 3文字しりとり：「言葉を思い出す」=>「3文字の言葉を選択する」=>「伝える」
 
-* Ruby version
+脳に刺激を与えることで認知症の予防につながります
 
-* System dependencies
+---
 
-* Configuration
+## 2.このアイデアはどこから生まれたのか
 
-* Database creation
+介護の現場で15年以上勤めた視点から
+- 現代では施設に入っている高齢者でもスマートフォンを持ってある方も多くみられる
+- 連絡手段だけでなく、ゲームをすることで認知機能の改善に活用している方もみられる
+- Webのゲームで高齢者でも簡単に使いやすいようなあぷりはないか
+- 大きな文字、簡単な文字入力でできないかと考え生まれました
 
-* Database initialization
+普段と違う視点から
+- 子供に対しても言語機能の発達に役立つ
+- 思考の柔軟性につながる
 
-* How to run the test suite
+---
 
-* Services (job queues, cache servers, search engines, etc.)
+## 3.課題の整理
 
-* Deployment instructions
+### 3-1.表に見えている困りごと
+- ただスマホを触るでは受動的で、認知症の進行につながる
 
-* ...
-# rails_template
+### 3-2.本当に解決したい課題は何か
+- 気兼ねなく使えることで、認知症進行を予防する
+- 受動的なコンテンツとしてだけではなく、能動的にすること
+
+---
+
+## 4.想定ユーザーについて
+
+### 4-1.想定しているユーザー
+- 高齢者：認知症予防を取り入れようとしている方
+- 小学校低学年：言葉遊びをし始めるため
+
+### 4-2.実際に使われる可能性について
+- 義父が言語機能低下の認知症を発症しており、少しでも認知症の進行を遅らせたいと思いました
+- 甥っ子がまもなく小学校に入学するとしになるので、少しでも言葉遊びで柔らかい思考を持てたらと思いました
+- 言葉遊びが好きなので自分用でもあります
+
+---
+
+## 5.既存サービス・競合調査
+
+### 5-1.似たサービスの調査
+
+
+- ltltlt-しりとり
+  - スマホアプリ：オンラインでのしりとりゲーム
+  - 外国語もある
+  - スマホで簡単に使用できる
+
+- TRIMOJI-ひらがな3文字のことばぱずる-
+  - 3文字の言葉パズル
+  - 表示された文字のパネル(8文字)から選択して言葉をつくる
+
+- HIMA DE SHOW
+  - 自分ひとりで3文字の言葉を繋げて遊ぶ
+
+---
+
+## 6.このアプリで実現すること
+MVPで作る機能/本リリースで作る機能
+- トップページ：サービス概要、入り口ボタン(ゲストログイン機能の活用)
+- しりとり会場ページ
+  - アニメーション的なもので
+    - ゲストログインボタン押下時、読み込み画面ではなくカーテンが暗転するような演出画面をJSで表示
+    - 「それではいざ開始」
+    - 打ち込みがめん(10回程度のやり取りで想定)
+    - CPUが返信する画面(セリフ・相槌つき)
+    - 結果発表
+  - 終了ボタン：ログアウト(ゲストユーザーをdestroy)
+  - もう1回ボタン：destroy → 新規ゲストユーザー作成 → sign_inを一連の流れとして行うメソッドで実装
+    - ログアウト・再ログインを1メソッドにまとめることで、sessionに保持していた対局データも合わせてリセットされる
+  - ログインセッションはブラウザを閉じたら切れるように設定(永続化しないsession cookieを利用)
+
+---
+
+### 技術スタック(初期設定)
+- Ruby 3.3.6
+- Ruby on Rails 7.0.10
+- Tailwind CSS
+- daisy UI
+- PostgreSQL
+- デプロイ先：Render
+- ライブラリ
+  - gem devise:（user・adminそれぞれ別モデルとして併用）
+  - gem devise-i18n
+  - gem importmap-rails
+  - gem rails-mecab
+  - gem natto
+- ActionCable(Redis)は不使用
+  - 対局はユーザー操作起点のターン制のため、通常のHTTPリクエスト＋Turbo Streamsで実装し、サーバーからの一方的なプッシュ配信は行わない
+  - Render上でのRedis追加コスト・構成を避け、軽量な構成を優先
+
+---
+
+## テーブル詳細
+
+: users
+- email : string
+- encrypted_password : string
+- guest : boolean
+- name : string
+- created_at : timestamp
+- updated_at : timestamp
+
+: words
+- word_name : string（旧word_bodyから改名）
+- word_explanation : string（単語の意味・説明文）
+- created_at : timestamp
+- updated_at : timestamp
+
+: cpu_comments
+- comment_body : string（セリフ本文）
+- category : string（aizuchi(相槌) / start / user_win / cpu_win / ending）
+- fixed_turn : integer, nullable（特定ターンに固定表示したい場合のターン数）
+- created_at : timestamp
+- updated_at : timestamp
+
+: admins
+- email : string
+- encrypted_password : string
+- created_at : timestamp
+- updated_at : timestamp
+
+---
+
+### テーブル設計についての補足(検討経緯)
+
+- **対局(battle)・対局中のやり取りログはDBに永続化しない**
+  - ゲストログイン＝ゲーム開始、終了ボタン＝ログアウトという1回きりのプレイを想定しており、個人の対局データを蓄積する意図がないため
+  - 対局の進行状態・やり取りの履歴はRailsのsessionで一時的に保持し、ログアウトとともに消える設計とする
+  - そのため`battles`・`logs`はテーブルとして作成しない
+- **wordsは個人データではなく、アプリ全体で共有し育っていく語彙・辞書マスタ**
+  - CPUは`words`全体からのみ発言を選択する(語彙を絞ることで難易度をコントロール)
+  - ユーザーの入力は`words`に限定せず、Mecab/nattoでその場で実在語かどうかを判定する(自由入力を許容し、大人・年配者が難しい単語を使うことも可能にする)
+  - 入力はひらがな/カタカナ限定とし、漢字の読み変換によるあいまいさを回避する
+- **word_explanation(単語の意味)の作り方**
+  - 子供向け辞書機能(API等)から説明文を取得する
+  - 生成AIによる要約・言い換えは使用しない(無料枠でもクレジットカード登録が必要になるため)
+  - 簡略化ルールとして「最初の句読点まで表示」を採用する
+  - 管理者画面から`words`を手動編集できるようにし、自動取得・簡略化の精度をカバーする
+- **cpu_commentsはCPUに人格・反応を持たせるためのセリフデータ**
+  - `words`とのFK関係は持たない(単語選択とは独立した演出データのため)
+  - `category`でセリフの使い所を区分する(開始/相槌/ユーザー勝利/CPU勝利/終了)
+  - 相槌は`fixed_turn`が設定されている行があればそのターン数の時に固定表示し(例:3ターン目固定で「おじょうず」)、それ以外は`fixed_turn`がnullの行からランダム表示する
+  - 「今何ターン目か」はDBではなくsessionで管理し、cpu_commentsの`fixed_turn`と突き合わせて表示するセリフを決定する
+- **管理者はusersにroleを持たせず、別モデル`admins`として分離する**
+  - deviseを`users`・`admins`それぞれに独立させて使う(`devise_for :users` / `devise_for :admins`)
+  - `admins`と`words`・`cpu_comments`にDB上の外部キーは持たせず、編集権限はアプリケーション層の認可ロジックで対応する
