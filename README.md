@@ -95,8 +95,7 @@ MVPで作る機能/本リリースで作る機能
   - gem devise:（user・adminそれぞれ別モデルとして併用）
   - gem devise-i18n
   - gem importmap-rails
-  - gem rails-mecab
-  - gem natto
+  - gem natto（rails-mecabはRubyGemsに存在しないgemだったため除外）
 - ActionCable(Redis)は不使用
   - 対局はユーザー操作起点のターン制のため、通常のHTTPリクエスト＋Turbo Streamsで実装し、サーバーからの一方的なプッシュ配信は行わない
   - Render上でのRedis追加コスト・構成を避け、軽量な構成を優先

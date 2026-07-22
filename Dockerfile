@@ -4,7 +4,7 @@ FROM ruby:3.3.6
 
 # タイムゾーンの設定
 # 今回は日本時間設定
-ENV TZ Asia/Tokyo
+ENV TZ=Asia/Tokyo
 
 
 # 必要なパッケージのインストール
@@ -26,8 +26,13 @@ RUN apt-get update -qq && apt-get install -y \
     yarn \
 
 # PostgreSQLの操作に必要なパッケージの追加
-    postgresql-client && \
+    postgresql-client \
 
+# 形態素解析(MeCab)本体・辞書・開発用ヘッダの追加
+# nattoがFFI経由でlibmecabを呼び出すために必要
+    mecab \
+    libmecab-dev \
+    mecab-ipadic-utf8 && \
 # パッケージをインストールして不要なものをキャッシュを削除するコマンド
     rm -rf /var/lib/apt/lists/*
 

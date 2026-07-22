@@ -50,6 +50,15 @@ gem "bootsnap", require: false
 
 gem "tailwindcss-rails"
 
+# Flexible authentication solution for Rails [https://github.com/heartcombo/devise]
+gem "devise"
+
+# Japanese translations for Devise [https://github.com/tigrish/devise-i18n]
+gem "devise-i18n"
+
+# Ruby binding for MeCab [https://github.com/buruzaemon/natto]
+gem "natto"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
