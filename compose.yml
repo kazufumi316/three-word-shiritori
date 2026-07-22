@@ -59,7 +59,7 @@ services:
     build: .
 
 # 実行コマンド
-    command: bash -c "bundle exec rails tailwindcss:watch"
+    command: bash -c "bundle exec rails tailwindcss:watch[always]"
 
 # ファイルの共有化の指定
     volumes:
