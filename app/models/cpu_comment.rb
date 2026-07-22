@@ -1,0 +1,2 @@
+class CpuComment < ApplicationRecord
+end
