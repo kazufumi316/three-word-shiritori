@@ -6,6 +6,12 @@
   </div>
 </div>
 
+<div class="text-sm">
+  <p>ターン: <%= @turn %></p>
+  <p>次の頭文字: <%= @last_word %></p>
+  <p>使った単語: <%= @used_words.join("、") %></p>
+</div>
+
 <div class="flex w-full gap-4">
   <%= link_to user_path(current_user), data: { turbo_method: :delete }, class: "w-1/2" do %>
     <%= image_tag "owari.png", alt: "おわり", class: "w-full h-auto" %>
