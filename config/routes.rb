@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
 
   get "shiritori" => "shiritori#index"
+  post "shiritori/answer" => "shiritori#answer", as: :shiritori_answer
 
   # Defines the root path route ("/")
   root "home#index"
