@@ -9,6 +9,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :admin do
+    resources :cpu_comments, except: [:show]
+  end
+
   # Defines the root path route ("/")
   root "home#index"
 end
