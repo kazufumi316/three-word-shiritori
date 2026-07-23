@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    root to: "admins#index"
     resources :cpu_comments, except: [:show]
     resources :words, only: [:index, :edit, :update, :destroy]
   end
