@@ -1,7 +1,7 @@
 <div class="relative w-full -translate-y-1/4 md:translate-y-0">
   <%= image_tag "top.png", alt: "さんもじしりとり", class: "w-full" %>
 
-  <%= link_to "#", class: "absolute top-[52%] left-1/2 -translate-x-1/2 w-1/2" do %>
+  <%= link_to users_path, data: { turbo_method: :post }, class: "absolute top-[52%] left-1/2 -translate-x-1/2 w-1/2" do %>
     <%= image_tag "button.png", alt: "げーむかいし", class: "w-full h-auto" %>
   <% end %>
 </div>
