@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :cpu_comments, except: [:show]
+    resources :words, only: [:index, :edit, :update, :destroy]
   end
 
   # Defines the root path route ("/")
