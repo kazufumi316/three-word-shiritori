@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     resources :words, only: [:index, :edit, :update, :destroy]
   end
 
+  get "shiritori" => "shiritori#index"
+
   # Defines the root path route ("/")
   root "home#index"
 end
