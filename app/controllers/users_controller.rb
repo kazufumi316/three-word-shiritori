@@ -1,10 +1,13 @@
 class UsersController < ApplicationController
+  STARTING_KANA = %w[あ か さ た な は ま や ら わ].freeze
+
   before_action :authenticate_user!, only: [:destroy, :restart]
 
   # ゲストログイン開始（トップページの「げーむかいし」ボタンの遷移先）
   def create
     user = User.create_guest!
     sign_in(user)
+    reset_shiritori_session
     redirect_to shiritori_path
   end
 
@@ -13,6 +16,7 @@ class UsersController < ApplicationController
     user = current_user
     sign_out(user)
     user.destroy
+    reset_shiritori_session
     redirect_to root_path
   end
 
@@ -24,6 +28,15 @@ class UsersController < ApplicationController
 
     new_user = User.create_guest!
     sign_in(new_user)
+    reset_shiritori_session
     redirect_to shiritori_path
+  end
+
+  private
+
+  def reset_shiritori_session
+    session[:turn] = 1
+    session[:used_words] = []
+    session[:last_word] = STARTING_KANA.sample
   end
 end
