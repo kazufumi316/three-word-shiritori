@@ -7,6 +7,8 @@ class ShiritoriController < ApplicationController
     @turn = session[:turn]
     @last_word = session[:last_word]
     @used_words = session[:used_words]
+    @required_kana = KanaMatcher.required_starting_kana(@last_word)
+    @cpu_comment = CpuResponder.line_for("start")
   end
 
   def answer
@@ -17,27 +19,56 @@ class ShiritoriController < ApplicationController
     if @error.nil?
       if word[-1] == "ん"
         @result = :lose
-      else
+        @cpu_comment = CpuResponder.line_for("cpu_win")
         session[:used_words] << word
         session[:last_word] = word
-        session[:turn] += 1
+      else
+        turn_completed = session[:turn]
+        session[:used_words] << word
+        session[:last_word] = word
+
+        cpu_word = CpuResponder.select_word(
+          required_kana: KanaMatcher.required_starting_kana(word),
+          used_words: session[:used_words],
+          turn: turn_completed,
+        )
+
+        if cpu_word.nil?
+          @result = :win
+          @cpu_comment = CpuResponder.line_for("user_win")
+        else
+          @cpu_word = cpu_word.word_name
+          session[:used_words] << cpu_word.word_name
+          session[:last_word] = cpu_word.word_name
+          session[:turn] += 1
+
+          if cpu_word.word_name[-1] == "ん"
+            @result = :win
+            @cpu_comment = CpuResponder.line_for("user_win")
+          else
+            @cpu_comment = CpuResponder.aizuchi(turn_completed)
+          end
+        end
       end
     end
 
     @turn = session[:turn]
     @last_word = session[:last_word]
     @used_words = session[:used_words]
+    @required_kana = KanaMatcher.required_starting_kana(@last_word)
     render :index
   end
 
   private
 
   def judge(word)
-    return "入力してください" if word.blank?
-    return "ひらがな3文字で入力してください" unless word.match?(KANA_WORD_REGEX)
-    return "「#{session[:last_word][-1]}」から始まる言葉を入力してください" if word[0] != session[:last_word][-1]
-    return "すでに使った言葉です" if session[:used_words].include?(word)
-    return "実在する言葉ではないようです" unless WordChecker.real_word?(word) || Word.exists?(word_name: word)
+    return "ことばを いれてね" if word.blank?
+    return "ひらがなで3もじ いれてね" unless word.match?(KANA_WORD_REGEX)
+
+    required_kana = KanaMatcher.required_starting_kana(session[:last_word])
+    return "「#{required_kana}」から はじまる ことばを いれてね" if KanaMatcher.seion(word[0]) != required_kana
+    return "もう つかった ことばだよ" if session[:used_words].include?(word)
+    return "そんな ことば ないみたい" unless WordChecker.real_word?(word) || Word.exists?(word_name: word)
 
     nil
   end
