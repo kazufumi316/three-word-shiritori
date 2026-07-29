@@ -11,6 +11,32 @@
   しょう にしん しない ひとで あるじ からだ どこか しよう いくさ じゃま
   がんも ねどこ ばった えじき つらさ あいま あまた ひどさ なにわ かやの
   のどか ひそう あらわ みだら めいよ かって ふそん いこじ うかつ しれつ
+  こいぬ
 ].each do |word_name|
   Word.find_or_create_by!(word_name: word_name)
+end
+
+# 「ん」で終わる語(10ターン目以降、CPUが該当する頭文字のとき優先的に選んで対局を終わらせるための語)
+%w[
+  いけん うどん えほん かばん きけん こばん さかん しけん てほん にほん
+  ふとん みかん りねん れもん おかん くかん ちきん ねはん ほかん やかん
+].each do |word_name|
+  Word.find_or_create_by!(word_name: word_name)
+end
+
+[
+  { comment_body: "おねがいします", category: "start", fixed_turn: nil },
+  { comment_body: "いいね", category: "aizuchi", fixed_turn: nil },
+  { comment_body: "うまい", category: "aizuchi", fixed_turn: nil },
+  { comment_body: "どうだ", category: "aizuchi", fixed_turn: nil },
+  { comment_body: "おじょうず", category: "aizuchi", fixed_turn: 3 },
+  { comment_body: "まけました", category: "user_win", fixed_turn: nil },
+  { comment_body: "やった", category: "cpu_win", fixed_turn: nil },
+  { comment_body: "ありがとうございました", category: "ending", fixed_turn: nil },
+  { comment_body: "またきてね", category: "ending", fixed_turn: nil },
+].each do |attrs|
+  CpuComment.find_or_create_by!(comment_body: attrs[:comment_body]) do |comment|
+    comment.category = attrs[:category]
+    comment.fixed_turn = attrs[:fixed_turn]
+  end
 end
