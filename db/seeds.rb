@@ -6,14 +6,14 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-# MeCab単体解析だと複数形態素に分割されてしまい誤って弾かれる、実在する3文字ひらがな名詞
+# 管理者が承認済みとして最初から登録しておく3文字ひらがな名詞
 %w[
   しょう にしん しない ひとで あるじ からだ どこか しよう いくさ じゃま
   がんも ねどこ ばった えじき つらさ あいま あまた ひどさ なにわ かやの
   のどか ひそう あらわ みだら めいよ かって ふそん いこじ うかつ しれつ
   こいぬ
 ].each do |word_name|
-  Word.find_or_create_by!(word_name: word_name)
+  Word.find_or_create_by!(word_name: word_name) { |word| word.status = :approved }
 end
 
 # 「ん」で終わる語(10ターン目以降、CPUが該当する頭文字のとき優先的に選んで対局を終わらせるための語)
@@ -21,7 +21,7 @@ end
   いけん うどん えほん かばん きけん こばん さかん しけん てほん にほん
   ふとん みかん りねん れもん おかん くかん ちきん ねはん ほかん やかん
 ].each do |word_name|
-  Word.find_or_create_by!(word_name: word_name)
+  Word.find_or_create_by!(word_name: word_name) { |word| word.status = :approved }
 end
 
 [

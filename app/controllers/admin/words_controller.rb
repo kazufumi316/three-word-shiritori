@@ -2,7 +2,7 @@ class Admin::WordsController < Admin::ApplicationController
   before_action :set_word, only: [:edit, :update, :destroy]
 
   def index
-    @words = Word.all
+    @words = Word.order(status: :asc, word_name: :asc)
   end
 
   def edit
@@ -10,7 +10,7 @@ class Admin::WordsController < Admin::ApplicationController
 
   def update
     if @word.update(word_params)
-      redirect_to admin_words_path, notice: "説明文を更新しました"
+      redirect_to admin_words_path, notice: "単語を更新しました"
     else
       render :edit
     end
@@ -28,6 +28,6 @@ class Admin::WordsController < Admin::ApplicationController
   end
 
   def word_params
-    params.require(:word).permit(:word_explanation)
+    params.require(:word).permit(:word_explanation, :status)
   end
 end

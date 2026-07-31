@@ -13,7 +13,7 @@ class CpuResponder
   # wordsテーブルの中からCPUが続けられる語を選ぶ。見つからなければnil(CPUの まけ)
   # 10ターン目以降は「ん」で終わる語があれば必ずそれを選び対局を終わらせる(なければそのまま まけ)
   def self.select_word(required_kana:, used_words:, turn:)
-    candidates = Word.where.not(word_name: used_words).select do |word|
+    candidates = Word.approved.where.not(word_name: used_words).select do |word|
       KanaMatcher.seion(word.word_name[0]) == required_kana
     end
 
