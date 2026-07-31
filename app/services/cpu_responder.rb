@@ -1,11 +1,6 @@
 class CpuResponder
   FINISH_FROM_TURN = 10
 
-  def self.aizuchi(turn)
-    CpuComment.find_by(category: "aizuchi", fixed_turn: turn) ||
-      CpuComment.where(category: "aizuchi", fixed_turn: nil).sample
-  end
-
   def self.line_for(category)
     CpuComment.where(category: category).sample
   end

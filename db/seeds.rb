@@ -25,18 +25,13 @@ end
 end
 
 [
-  { comment_body: "おねがいします", category: "start", fixed_turn: nil },
-  { comment_body: "いいね", category: "aizuchi", fixed_turn: nil },
-  { comment_body: "うまい", category: "aizuchi", fixed_turn: nil },
-  { comment_body: "どうだ", category: "aizuchi", fixed_turn: nil },
-  { comment_body: "おじょうず", category: "aizuchi", fixed_turn: 3 },
-  { comment_body: "まけました", category: "user_win", fixed_turn: nil },
-  { comment_body: "やった", category: "cpu_win", fixed_turn: nil },
-  { comment_body: "ありがとうございました", category: "ending", fixed_turn: nil },
-  { comment_body: "またきてね", category: "ending", fixed_turn: nil },
+  { comment_body: "おねがいします", category: "start" },
+  { comment_body: "まけました", category: "user_win" },
+  { comment_body: "やった", category: "cpu_win" },
+  { comment_body: "ありがとうございました", category: "ending" },
+  { comment_body: "またきてね", category: "ending" },
 ].each do |attrs|
   CpuComment.find_or_create_by!(comment_body: attrs[:comment_body]) do |comment|
     comment.category = attrs[:category]
-    comment.fixed_turn = attrs[:fixed_turn]
   end
 end

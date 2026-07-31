@@ -1,4 +1,44 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::CpuComments#index</h1>
-  <p>Find me in app/views/admin/cpu_comments/index.html.erb</p>
+<div class="w-full">
+  <h1 class="font-bold text-4xl mb-6">セリフ管理</h1>
+
+  <% if notice %>
+    <p class="mb-4 text-green-700"><%= notice %></p>
+  <% end %>
+
+  <%= link_to "新しいセリフを登録", new_admin_cpu_comment_path, class: "inline-block mb-6 font-bold px-6 py-2 bg-blue-500 text-white rounded shadow" %>
+
+  <table class="w-full text-left border-collapse">
+    <thead>
+      <tr class="border-b">
+        <th class="py-2 px-2">セリフ</th>
+        <th class="py-2 px-2">カテゴリ</th>
+        <th class="py-2 px-2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @cpu_comments.each do |cpu_comment| %>
+        <tr class="border-b">
+          <td class="py-2 px-2"><%= cpu_comment.comment_body %></td>
+          <td class="py-2 px-2">
+            <% case cpu_comment.category %>
+            <% when "start" %>
+              かいし
+            <% when "user_win" %>
+              ユーザーのかち
+            <% when "cpu_win" %>
+              CPUのかち(ユーザーのまけ)
+            <% when "ending" %>
+              しゅうりょう
+            <% end %>
+          </td>
+          <td class="py-2 px-2 flex gap-4">
+            <%= link_to "編集", edit_admin_cpu_comment_path(cpu_comment) %>
+            <%= link_to "削除", admin_cpu_comment_path(cpu_comment), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= link_to "かんりしゃ画面にもどる", admin_root_path, class: "inline-block mt-6 underline" %>
 </div>

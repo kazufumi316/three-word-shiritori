@@ -17,8 +17,27 @@ class KanaMatcher
     %w[お こ そ と の ほ も よ ろ を ご ぞ ど ぼ ぽ] => "お",
   }.each_with_object({}) { |(chars, vowel), h| chars.each { |c| h[c] = vowel } }.freeze
 
+  # 五十音の行。管理画面での単語の絞り込み(ページネーション)に使う
+  ROWS = {
+    "あ" => %w[あ い う え お],
+    "か" => %w[か き く け こ],
+    "さ" => %w[さ し す せ そ],
+    "た" => %w[た ち つ て と],
+    "な" => %w[な に ぬ ね の],
+    "は" => %w[は ひ ふ へ ほ],
+    "ま" => %w[ま み む め も],
+    "や" => %w[や ゆ よ],
+    "ら" => %w[ら り る れ ろ],
+    "わ" => %w[わ を ん],
+  }.freeze
+
   def self.seion(char)
     SEION.fetch(char, char)
+  end
+
+  def self.row_for(char)
+    seion_char = seion(char)
+    ROWS.find { |_, chars| chars.include?(seion_char) }&.first
   end
 
   # 「ー」で終わる場合は直前の文字の母音まで戻して次の頭文字を判定する(例: 「るびー」=> 「い」)

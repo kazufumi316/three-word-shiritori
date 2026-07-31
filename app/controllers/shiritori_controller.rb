@@ -58,8 +58,6 @@ class ShiritoriController < ApplicationController
           if cpu_word.word_name[-1] == "ん"
             result["result"] = "win"
             result["cpu_comment_body"] = CpuResponder.line_for("user_win")&.comment_body
-          else
-            result["cpu_comment_body"] = CpuResponder.aizuchi(turn_completed)&.comment_body
           end
         end
       end
