@@ -5,6 +5,13 @@
     <p class="mb-4 text-green-700"><%= notice %></p>
   <% end %>
 
+  <div class="flex gap-2 mb-6 flex-wrap">
+    <% KanaMatcher::ROWS.each_key do |row| %>
+      <%= link_to row, admin_words_path(row: row),
+            class: "px-3 py-1 rounded #{@row == row ? "bg-blue-500 text-white" : "bg-gray-200"}" %>
+    <% end %>
+  </div>
+
   <table class="w-full text-left border-collapse">
     <thead>
       <tr class="border-b">
@@ -37,4 +44,6 @@
       <% end %>
     </tbody>
   </table>
+
+  <%= link_to "かんりしゃ画面にもどる", admin_root_path, class: "inline-block mt-6 underline" %>
 </div>

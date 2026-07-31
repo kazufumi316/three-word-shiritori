@@ -2,7 +2,10 @@ class Admin::WordsController < Admin::ApplicationController
   before_action :set_word, only: [:edit, :update, :destroy]
 
   def index
-    @words = Word.order(status: :asc, word_name: :asc)
+    @row = KanaMatcher::ROWS.key?(params[:row]) ? params[:row] : "あ"
+    @words = Word.all
+                 .select { |word| KanaMatcher.row_for(word.word_name[0]) == @row }
+                 .sort_by { |word| [word.status_before_type_cast, word.word_name] }
   end
 
   def edit

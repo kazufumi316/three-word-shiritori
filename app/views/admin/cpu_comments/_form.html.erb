@@ -1,0 +1,23 @@
+<%= form_with model: [:admin, cpu_comment], class: "flex flex-col gap-4" do |f| %>
+  <div>
+    <%= f.label :comment_body, "セリフ" %>
+    <%= f.text_field :comment_body, class: "border w-full px-2 py-1" %>
+  </div>
+
+  <div>
+    <%= f.label :category, "カテゴリ" %>
+    <%= f.select :category,
+          [
+            ["かいし", "start"],
+            ["ユーザーのかち", "user_win"],
+            ["CPUのかち(ユーザーのまけ)", "cpu_win"],
+            ["しゅうりょう", "ending"],
+          ],
+          {},
+          class: "border w-full px-2 py-1" %>
+  </div>
+
+  <%= f.submit "保存する", class: "font-bold px-6 py-2 bg-blue-500 text-white rounded shadow cursor-pointer" %>
+<% end %>
+
+<%= link_to "一覧にもどる", admin_cpu_comments_path, class: "block mt-6 underline" %>
