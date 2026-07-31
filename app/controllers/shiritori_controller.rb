@@ -8,20 +8,31 @@ class ShiritoriController < ApplicationController
     @last_word = session[:last_word]
     @used_words = session[:used_words]
     @required_kana = KanaMatcher.required_starting_kana(@last_word)
-    @cpu_comment = CpuResponder.line_for("start")
+
+    result = session.delete(:last_answer_result)
+
+    if result
+      @error = result["error"]
+      @result = result["result"]&.to_sym
+      @cpu_word = result["cpu_word"]
+      @cpu_comment_body = result["cpu_comment_body"]
+    else
+      @cpu_comment_body = CpuResponder.line_for("start")&.comment_body
+    end
   end
 
   def answer
     word = params[:word].to_s.unicode_normalize(:nfc)
 
-    @error = judge(word)
+    error = judge(word)
+    result = { "error" => error }
 
-    if @error.nil?
+    if error.nil?
       Word.find_or_create_by!(word_name: word) { |w| w.status = :pending }
 
       if word[-1] == "ん"
-        @result = :lose
-        @cpu_comment = CpuResponder.line_for("cpu_win")
+        result["result"] = "lose"
+        result["cpu_comment_body"] = CpuResponder.line_for("cpu_win")&.comment_body
         session[:used_words] << word
         session[:last_word] = word
       else
@@ -36,29 +47,26 @@ class ShiritoriController < ApplicationController
         )
 
         if cpu_word.nil?
-          @result = :win
-          @cpu_comment = CpuResponder.line_for("user_win")
+          result["result"] = "win"
+          result["cpu_comment_body"] = CpuResponder.line_for("user_win")&.comment_body
         else
-          @cpu_word = cpu_word.word_name
+          result["cpu_word"] = cpu_word.word_name
           session[:used_words] << cpu_word.word_name
           session[:last_word] = cpu_word.word_name
           session[:turn] += 1
 
           if cpu_word.word_name[-1] == "ん"
-            @result = :win
-            @cpu_comment = CpuResponder.line_for("user_win")
+            result["result"] = "win"
+            result["cpu_comment_body"] = CpuResponder.line_for("user_win")&.comment_body
           else
-            @cpu_comment = CpuResponder.aizuchi(turn_completed)
+            result["cpu_comment_body"] = CpuResponder.aizuchi(turn_completed)&.comment_body
           end
         end
       end
     end
 
-    @turn = session[:turn]
-    @last_word = session[:last_word]
-    @used_words = session[:used_words]
-    @required_kana = KanaMatcher.required_starting_kana(@last_word)
-    render :index
+    session[:last_answer_result] = result
+    redirect_to shiritori_path
   end
 
   private
