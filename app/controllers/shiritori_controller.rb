@@ -17,6 +17,8 @@ class ShiritoriController < ApplicationController
     @error = judge(word)
 
     if @error.nil?
+      Word.find_or_create_by!(word_name: word) { |w| w.status = :pending }
+
       if word[-1] == "ん"
         @result = :lose
         @cpu_comment = CpuResponder.line_for("cpu_win")
@@ -68,7 +70,7 @@ class ShiritoriController < ApplicationController
     required_kana = KanaMatcher.required_starting_kana(session[:last_word])
     return "「#{required_kana}」から はじまる ことばを いれてね" if KanaMatcher.seion(word[0]) != required_kana
     return "もう つかった ことばだよ" if session[:used_words].include?(word)
-    return "そんな ことば ないみたい" unless WordChecker.real_word?(word) || Word.exists?(word_name: word)
+    return "その ことばは つかえないよ" if Word.find_by(word_name: word)&.rejected?
 
     nil
   end

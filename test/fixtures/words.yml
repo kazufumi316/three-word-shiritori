@@ -1,9 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  word_name: MyString
-  word_explanation: MyString
+  word_name: たまご
+  word_explanation: にわとりのたまご
+  status: approved
 
 two:
-  word_name: MyString
-  word_explanation: MyString
+  word_name: ごりら
+  word_explanation: おおきなさる
+  status: pending

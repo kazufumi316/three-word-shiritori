@@ -111,14 +111,6 @@ GEM
     drb (2.2.3)
     erb (6.0.4)
     erubi (1.13.1)
-    ffi (1.17.4-aarch64-linux-gnu)
-    ffi (1.17.4-aarch64-linux-musl)
-    ffi (1.17.4-arm-linux-gnu)
-    ffi (1.17.4-arm-linux-musl)
-    ffi (1.17.4-arm64-darwin)
-    ffi (1.17.4-x86_64-darwin)
-    ffi (1.17.4-x86_64-linux-gnu)
-    ffi (1.17.4-x86_64-linux-musl)
     globalid (1.4.0)
       activesupport (>= 6.1)
     i18n (1.15.2)
@@ -155,8 +147,6 @@ GEM
       prism (~> 1.5)
     msgpack (1.8.3)
     mutex_m (0.3.0)
-    natto (1.2.0)
-      ffi (>= 1.9.0)
     net-imap (0.6.4.1)
       date
       net-protocol
@@ -322,7 +312,6 @@ DEPENDENCIES
   devise-i18n
   importmap-rails
   jbuilder
-  natto
   pg (~> 1.1)
   puma (>= 5.0)
   rails (~> 7.0.10)

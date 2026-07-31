@@ -26,13 +26,7 @@ RUN apt-get update -qq && apt-get install -y \
     yarn \
 
 # PostgreSQLの操作に必要なパッケージの追加
-    postgresql-client \
-
-# 形態素解析(MeCab)本体・辞書・開発用ヘッダの追加
-# nattoがFFI経由でlibmecabを呼び出すために必要
-    mecab \
-    libmecab-dev \
-    mecab-ipadic-utf8 && \
+    postgresql-client && \
 # パッケージをインストールして不要なものをキャッシュを削除するコマンド
     rm -rf /var/lib/apt/lists/*
 

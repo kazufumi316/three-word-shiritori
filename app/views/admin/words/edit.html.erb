@@ -1,4 +1,22 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Words#edit</h1>
-  <p>Find me in app/views/admin/words/edit.html.erb</p>
+<div class="w-full max-w-md">
+  <h1 class="font-bold text-4xl mb-6">単語編集「<%= @word.word_name %>」</h1>
+
+  <%= form_with model: @word, url: admin_word_path(@word), class: "flex flex-col gap-4" do |f| %>
+    <div>
+      <%= f.label :word_explanation, "説明" %>
+      <%= f.text_field :word_explanation, class: "border w-full px-2 py-1" %>
+    </div>
+
+    <div>
+      <%= f.label :status, "ステータス" %>
+      <%= f.select :status,
+            [["仮登録", "pending"], ["認証", "approved"], ["拒否", "rejected"]],
+            {},
+            class: "border w-full px-2 py-1" %>
+    </div>
+
+    <%= f.submit "更新する", class: "font-bold px-6 py-2 bg-blue-500 text-white rounded shadow cursor-pointer" %>
+  <% end %>
+
+  <%= link_to "一覧にもどる", admin_words_path, class: "block mt-6 underline" %>
 </div>

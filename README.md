@@ -95,7 +95,6 @@ MVPで作る機能/本リリースで作る機能
   - gem devise:（user・adminそれぞれ別モデルとして併用）
   - gem devise-i18n
   - gem importmap-rails
-  - gem natto（rails-mecabはRubyGemsに存在しないgemだったため除外）
 - ActionCable(Redis)は不使用
   - 対局はユーザー操作起点のターン制のため、通常のHTTPリクエスト＋Turbo Streamsで実装し、サーバーからの一方的なプッシュ配信は行わない
   - Render上でのRedis追加コスト・構成を避け、軽量な構成を優先
@@ -114,6 +113,7 @@ MVPで作る機能/本リリースで作る機能
 : words
 - word_name : string（旧word_bodyから改名）
 - word_explanation : string（単語の意味・説明文）
+- status : integer, enum（pending(仮登録) / approved(認証) / rejected(拒否)）
 - created_at : timestamp
 - updated_at : timestamp
 
@@ -139,8 +139,9 @@ MVPで作る機能/本リリースで作る機能
   - 対局の進行状態・やり取りの履歴はRailsのsessionで一時的に保持し、ログアウトとともに消える設計とする
   - そのため`battles`・`logs`はテーブルとして作成しない
 - **wordsは個人データではなく、アプリ全体で共有し育っていく語彙・辞書マスタ**
-  - CPUは`words`全体からのみ発言を選択する(語彙を絞ることで難易度をコントロール)
-  - ユーザーの入力は`words`に限定せず、Mecab/nattoでその場で実在語かどうかを判定する(自由入力を許容し、大人・年配者が難しい単語を使うことも可能にする)
+  - CPUは`words`のうち`status: approved`のもののみから発言を選択する(語彙を絞ることで難易度をコントロールし、未確認の語をCPUが発言して不具合と誤解されるのを防ぐ)
+  - ユーザーの入力は形式(ひらがな3文字)・しりとりの継続・対局内での未使用のみをその場で判定し、`status: rejected`の語だけを弾く(実在語判定はMeCab/nattoでは行わず、管理者が事後に精査する)
+  - 初めて使われた語は`status: pending`(仮登録)として自動的に`words`へ登録され、管理者が`admin/words`画面で`approved`(認証)・`rejected`(拒否)を選定する
   - 入力はひらがな限定とし、漢字の読み変換によるあいまいさを回避する
 - **word_explanation(単語の意味)の作り方**
   - 子供向け辞書機能(API等)から説明文を取得する
