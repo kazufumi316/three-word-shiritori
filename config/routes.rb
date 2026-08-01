@@ -12,7 +12,11 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "admins#index"
     resources :cpu_comments, except: [:show]
-    resources :words, only: [:index, :edit, :update, :destroy]
+    resources :words, only: [:index, :edit, :update, :destroy] do
+      collection do
+        patch :bulk_approve
+      end
+    end
   end
 
   get "levels" => "levels#index", as: :levels

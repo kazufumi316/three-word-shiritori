@@ -1,10 +1,10 @@
 <% should_animate = @cpu_word.present? || @result.present? %>
 
-<div data-controller="battle-reveal" data-battle-reveal-animate-value="<%= should_animate %>" class="w-full">
+<div data-controller="battle-reveal" data-battle-reveal-animate-value="<%= should_animate %>" data-battle-reveal-finished-value="<%= @result.present? %>" class="w-full">
   <div class="relative w-full">
     <%= image_tag "battle.png", alt: "たいきょくがめん", class: "w-full" %>
 
-    <div class="absolute top-[calc(50%+30px)] left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 bg-yellow-200 p-3 md:p-12">
+    <div class="absolute top-[calc(50%+30px)] left-1/2 -translate-x-[calc(50%+10px)] -translate-y-1/2 w-2/3 bg-yellow-200 p-3 md:p-12">
       <!-- せりふひょうじエリア -->
       <div class="bg-white border shadow px-2 py-2 md:px-4 md:py-5 text-center font-bold text-sm md:text-3xl">
         <% if @error %>
@@ -22,6 +22,11 @@
               <%= @cpu_comment_body %>
             <% end %>
           </p>
+          <% if @result.present? %>
+            <p data-battle-reveal-target="prompt" class="mt-2 transition-opacity duration-700 <%= "opacity-0" if should_animate %>">
+              どうしますか？
+            </p>
+          <% end %>
         <% end %>
       </div>
 
@@ -34,6 +39,16 @@
           <%= form_with url: shiritori_answer_path, method: :post, class: "mt-2 md:mt-10 flex justify-center gap-1 md:gap-2" do %>
             <%= text_field_tag :word, nil, class: "bg-white border font-bold text-sm md:text-3xl px-1 md:px-2 w-2/5 md:w-auto" %>
             <%= submit_tag "こたえる", class: "font-bold text-sm md:text-3xl px-2 py-1 md:px-6 md:py-2 bg-blue-500 text-white rounded shadow cursor-pointer" %>
+          <% end %>
+        </div>
+      <% else %>
+        <div data-battle-reveal-target="endButtons" class="mt-2 md:mt-10 flex w-full gap-4 transition-opacity duration-700 <%= "opacity-0" if should_animate %>">
+          <%= link_to user_path(current_user), data: { turbo_method: :delete }, class: "w-1/2" do %>
+            <%= image_tag "owari.png", alt: "おわり", class: "w-full h-auto" %>
+          <% end %>
+
+          <%= link_to restart_users_path, data: { turbo_method: :post }, class: "w-1/2" do %>
+            <%= image_tag "mouichido.png", alt: "もういちど", class: "w-full h-auto" %>
           <% end %>
         </div>
       <% end %>
@@ -52,16 +67,6 @@
       </button>
     </div>
     <div data-battle-reveal-target="endButtons" class="hidden flex w-full gap-4">
-      <%= link_to user_path(current_user), data: { turbo_method: :delete }, class: "w-1/2" do %>
-        <%= image_tag "owari.png", alt: "おわり", class: "w-full h-auto" %>
-      <% end %>
-
-      <%= link_to restart_users_path, data: { turbo_method: :post }, class: "w-1/2" do %>
-        <%= image_tag "mouichido.png", alt: "もういちど", class: "w-full h-auto" %>
-      <% end %>
-    </div>
-  <% else %>
-    <div data-battle-reveal-target="endButtons" class="flex w-full gap-4 transition-opacity duration-700 <%= "opacity-0" if should_animate %>">
       <%= link_to user_path(current_user), data: { turbo_method: :delete }, class: "w-1/2" do %>
         <%= image_tag "owari.png", alt: "おわり", class: "w-full h-auto" %>
       <% end %>

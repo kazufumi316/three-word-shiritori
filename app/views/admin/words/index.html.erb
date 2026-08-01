@@ -12,38 +12,50 @@
     <% end %>
   </div>
 
-  <table class="w-full text-left border-collapse">
-    <thead>
-      <tr class="border-b">
-        <th class="py-2 px-2">単語</th>
-        <th class="py-2 px-2">説明</th>
-        <th class="py-2 px-2">ステータス</th>
-        <th class="py-2 px-2"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @words.each do |word| %>
+  <%= form_with url: bulk_approve_admin_words_path, method: :patch do %>
+    <%= hidden_field_tag :row, @row %>
+
+    <table class="w-full text-left border-collapse">
+      <thead>
         <tr class="border-b">
-          <td class="py-2 px-2"><%= word.word_name %></td>
-          <td class="py-2 px-2"><%= word.word_explanation %></td>
-          <td class="py-2 px-2">
-            <% case word.status %>
-            <% when "pending" %>
-              仮登録
-            <% when "approved" %>
-              認証
-            <% when "rejected" %>
-              拒否
-            <% end %>
-          </td>
-          <td class="py-2 px-2 flex gap-4">
-            <%= link_to "編集", edit_admin_word_path(word) %>
-            <%= link_to "削除", admin_word_path(word), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?" } %>
-          </td>
+          <th class="py-2 px-2"></th>
+          <th class="py-2 px-2">単語</th>
+          <th class="py-2 px-2">説明</th>
+          <th class="py-2 px-2">ステータス</th>
+          <th class="py-2 px-2"></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @words.each do |word| %>
+          <tr class="border-b">
+            <td class="py-2 px-2">
+              <% if word.pending? %>
+                <%= check_box_tag "word_ids[]", word.id, true, id: "word_ids_#{word.id}" %>
+              <% end %>
+            </td>
+            <td class="py-2 px-2"><%= word.word_name %></td>
+            <td class="py-2 px-2"><%= word.word_explanation %></td>
+            <td class="py-2 px-2">
+              <% case word.status %>
+              <% when "pending" %>
+                仮登録
+              <% when "approved" %>
+                認証
+              <% when "rejected" %>
+                拒否
+              <% end %>
+            </td>
+            <td class="py-2 px-2 flex gap-4">
+              <%= link_to "編集", edit_admin_word_path(word) %>
+              <%= link_to "削除", admin_word_path(word), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <%= submit_tag "選択した単語を一括認証", class: "mt-4 font-bold px-6 py-2 bg-blue-500 text-white rounded shadow cursor-pointer", data: { turbo_confirm: "選択した単語を一括で認証しますか?" } %>
+  <% end %>
 
   <%= link_to "かんりしゃ画面にもどる", admin_root_path, class: "inline-block mt-6 underline" %>
 </div>
