@@ -24,6 +24,11 @@ class Admin::WordsController < Admin::ApplicationController
     redirect_to admin_words_path, notice: "単語を削除しました"
   end
 
+  def bulk_approve
+    Word.pending.where(id: params[:word_ids]).update_all(status: Word.statuses[:approved])
+    redirect_to admin_words_path(row: params[:row]), notice: "選択した単語を一括認証しました"
+  end
+
   private
 
   def set_word
