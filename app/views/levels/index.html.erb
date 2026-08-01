@@ -1,0 +1,13 @@
+<div data-controller="curtain" class="w-full max-w-md">
+  <h1 class="font-bold text-3xl md:text-4xl text-center mb-6">レベルを えらんでね</h1>
+
+  <div class="flex flex-col gap-4">
+    <% Level::LEVELS.each do |key, info| %>
+      <%= link_to info[:label], users_path(level: key), data: { action: "curtain#start" }, class: "block text-center font-bold text-xl md:text-2xl px-6 py-4 bg-blue-500 text-white rounded shadow" %>
+    <% end %>
+  </div>
+
+  <div data-curtain-target="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-700 z-50 flex items-center justify-center">
+    <p class="text-white font-bold text-4xl px-6 text-center">それでは いざ しょうぶ</p>
+  </div>
+</div>

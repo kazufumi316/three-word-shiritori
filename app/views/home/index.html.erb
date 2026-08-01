@@ -1,13 +1,7 @@
-<div data-controller="curtain">
-  <div class="relative w-full -translate-y-1/4 md:translate-y-0">
-    <%= image_tag "top.png", alt: "さんもじしりとり", class: "w-full" %>
+<div class="relative w-full -translate-y-1/4 md:translate-y-0">
+  <%= image_tag "top.png", alt: "さんもじしりとり", class: "w-full" %>
 
-    <%= link_to users_path, data: { action: "curtain#start" }, class: "absolute top-[52%] left-1/2 -translate-x-1/2 w-1/2" do %>
-      <%= image_tag "button.png", alt: "げーむかいし", class: "w-full h-auto" %>
-    <% end %>
-  </div>
-
-  <div data-curtain-target="overlay" class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-700 z-50 flex items-center justify-center">
-    <p class="text-white font-bold text-4xl px-6 text-center">それでは いざ しょうぶ</p>
-  </div>
+  <%= link_to levels_path, class: "absolute top-[52%] left-1/2 -translate-x-1/2 w-1/2" do %>
+    <%= image_tag "button.png", alt: "げーむかいし", class: "w-full h-auto" %>
+  <% end %>
 </div>

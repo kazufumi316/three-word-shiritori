@@ -3,11 +3,12 @@ class UsersController < ApplicationController
 
   before_action :authenticate_user!, only: [:destroy, :restart]
 
-  # ゲストログイン開始（トップページの「げーむかいし」ボタンの遷移先）
+  # ゲストログイン開始（レベル選択画面のボタンの遷移先）
   def create
+    level = Level.valid?(params[:level]) ? params[:level] : Level::DEFAULT
     user = User.create_guest!
     sign_in(user)
-    reset_shiritori_session
+    reset_shiritori_session(level)
     redirect_to shiritori_path
   end
 
@@ -20,23 +21,25 @@ class UsersController < ApplicationController
     redirect_to root_path
   end
 
-  # もう1回ボタン：destroy → 新規ゲストユーザー作成 → sign_inを一連の流れで実行
+  # もう1回ボタン：destroy → 新規ゲストユーザー作成 → sign_inを一連の流れで実行（レベルは直前の対局を引き継ぐ）
   def restart
     old_user = current_user
+    level = session[:level] || Level::DEFAULT
     sign_out(old_user)
     old_user.destroy
 
     new_user = User.create_guest!
     sign_in(new_user)
-    reset_shiritori_session
+    reset_shiritori_session(level)
     redirect_to shiritori_path
   end
 
   private
 
-  def reset_shiritori_session
+  def reset_shiritori_session(level = Level::DEFAULT)
     session[:turn] = 1
     session[:used_words] = []
     session[:last_word] = STARTING_KANA.sample
+    session[:level] = level
   end
 end
