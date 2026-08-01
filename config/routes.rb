@@ -15,6 +15,8 @@ Rails.application.routes.draw do
     resources :words, only: [:index, :edit, :update, :destroy]
   end
 
+  get "levels" => "levels#index", as: :levels
+
   get "shiritori" => "shiritori#index"
   post "shiritori/answer" => "shiritori#answer", as: :shiritori_answer
 

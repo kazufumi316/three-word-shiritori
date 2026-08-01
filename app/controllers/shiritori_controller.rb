@@ -44,6 +44,7 @@ class ShiritoriController < ApplicationController
           required_kana: KanaMatcher.required_starting_kana(word),
           used_words: session[:used_words],
           turn: turn_completed,
+          finish_from_turn: Level.finish_from_turn(session[:level]),
         )
 
         if cpu_word.nil?
